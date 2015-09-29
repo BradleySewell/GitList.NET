@@ -242,12 +242,26 @@ namespace GitList.Core.Entities.Repository
                         repo.CommitsAheadBy = aheadCount;
                         repo.CommitsBehindBy = behindCount;
                         repo.CommitLog = commitLog;
-                        repo.Message = null;
                         repo.InProgress = false;
                         rootItem.Refreshing = false;
 
                     });
                 });
+
+
+                DispatchInvoker.InvokeBackground(() =>
+                {
+                    if (rootItem.RepositoryItems != null)
+                    {
+                        var sortedList = rootItem.RepositoryItems.OrderBy(x => x.CurrentBranch).ToList();
+                        rootItem.RepositoryItems.Clear();
+                        sortedList.ForEach(x => 
+                        {
+                            rootItem.RepositoryItems.Add(x);
+                        });
+                    }
+                });
+
             }).Start();
 
         }
@@ -391,8 +405,6 @@ namespace GitList.Core.Entities.Repository
                 x.InProgress = true;
                 x.Modified = null;
                 x.Changes = null;
-                x.Branches = null;
-                x.CurrentBranch = null;
                 x.CommitsAheadBy = 0;
                 x.CommitsBehindBy = 0;
                 x.CommitLog = null;

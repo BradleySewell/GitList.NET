@@ -22,4 +22,3 @@ C:\Development\GitList\GitList.Core\bin\Debug\SourceLink.Git.xml
 C:\Development\GitList\GitList.Core\bin\Debug\FSharp.Core.xml
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.dll
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.pdb
-C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.csprojResolveAssemblyReference.cache
