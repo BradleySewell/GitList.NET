@@ -1,0 +1,666 @@
+﻿<Controls:MetroWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:CustomProperties="clr-namespace:GitList.Client.CustomProperties"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Converters="clr-namespace:GitList.Core.Entities.Converters;assembly=GitList.Core"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:consoleControl="clr-namespace:ConsoleControl.WPF;assembly=ConsoleControl.WPF"
+        xmlns:t="clr-namespace:Simple.Wpf.Terminal;assembly=Simple.Wpf.Terminal"
+    mc:Ignorable="d" x:Class="GitList.Client.GitListMainWindow"
+        Title="GitList" Height="655" Width="1202" Background="White" WindowState="Maximized" ShowIconOnTitleBar="True" Icon="Images\Icon.ico"
+        ShowTitleBar="True" EnableDWMDropShadow="True" ResizeMode="CanResizeWithGrip" WindowTransitionsEnabled="True" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" KeyDown="Window_KeyDown" StateChanged="Window_StateChanged"  Closing="Window_Closing">
+
+
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button CustomProperties:ContextMenuLeftClickBehavior.IsLeftClickEnabled="true">
+                <StackPanel Orientation="Horizontal">
+                    <!--<Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_cupcake}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>-->
+                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="settings" />
+                </StackPanel>
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Auto start" IsCheckable="true"/>
+                        <MenuItem Header="Minimize on close" IsCheckable="true"/>
+                        <MenuItem Header="Periodic refresh" IsCheckable="true"/>
+                        <MenuItem Header="Refresh detection" IsCheckable="true"/>
+                    </ContextMenu>
+                </Button.ContextMenu>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+
+
+
+
+    <Controls:MetroWindow.Resources>
+        <Converters:ObservableCollectionToStringConverter x:Key="ObservableCollectionToStringConverter" />
+        <Converters:DirectoryPathToDirectoryNameStringConverter x:Key="DirectoryPathToDirectoryNameStringConverter" />
+        <Converters:DateTimeToTimeAgoStringConverter x:Key="DateTimeToTimeAgoStringConverter" />
+
+        <Style x:Key="RootDirectoryItemsStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Grid HorizontalAlignment="Stretch" Margin="0,0,0,70">
+                            <Border x:Name="Border" BorderThickness="1" HorizontalAlignment="Stretch" Padding="2" CornerRadius="5" SnapsToDevicePixels="True" BorderBrush="WhiteSmoke">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition MinWidth="325" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="#3498DB"/>
+                                        </Border.Background>
+                                    </Border>
+
+                                    <Grid Grid.Row="0" HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="250*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button x:Name="btnRootDirectoryVisibility" Grid.Column="0" Click="btnRootDirectoryVisibility_OnClick" Focusable="False" FontWeight="Bold" FontSize="16" VerticalContentAlignment="Stretch">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Collapsed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                            <Setter Property="Content" Value="+"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="Background" Value="Green" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Collapsed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                                            <Setter Property="Content" Value="-"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                            <Setter Property="Background" Value="Red" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        
+                                        <TextBlock x:Name="RootDirectoryPath" Grid.Column="2" TextTrimming="CharacterEllipsis" Foreground="White" Style="{DynamicResource OnMouseOver}" FontWeight="Bold" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" MouseLeftButtonDown="tbRootDirectoryPath_OnMouseLeftButtonDown" ToolTip="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} - ({1})">
+                                                    <Binding Path="Path" Converter="{StaticResource DirectoryPathToDirectoryNameStringConverter}" />
+                                                    <Binding Path="RepositoryItems.Count" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+
+                                        <Button x:Name="btnRefreshRootDirectory" Grid.Column="4" ToolTip="Refresh" Content="Refresh" Focusable="False" Click="btnRefreshRootDirectory_OnClick" Background="#f0ad4e" Foreground="White"/>
+                                        <Button x:Name="btnRemoveRootDirectoryPath" Grid.Column="5" ToolTip="Remove Root Directory" Focusable="False" Click="btnRemoveRootDirectory_OnClick" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                            <Image Source="Images/Delete.png"/>
+                                        </Button>
+
+                                    </Grid>
+
+                                    <GroupBox Grid.Row="1" Header="Actions for all repositories" HorizontalAlignment="Stretch">
+                                        <GroupBox.Style>
+                                            <Style TargetType="GroupBox">
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </GroupBox.Style>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="5"/>
+                                                <ColumnDefinition />
+                                                <!--<ColumnDefinition Width="5"/>
+                                                <ColumnDefinition />-->
+                                            </Grid.ColumnDefinitions>
+
+                                            <ComboBox x:Name="cbRepositoryBranches" Grid.Column="0" SelectedItem="{Binding RootBranch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding RepositoryBranches, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding RootBranch}"/>
+                                            <Button x:Name="btnChangeRootBranch" Grid.Column="1" Content="Change" Foreground="White" Background="#f0ad4e" Click="btnChangeRootBranch_OnClick"/>
+                                            <!--<Button x:Name="btnResetRootBranch" Grid.Column="3" Content="Reset" Foreground="White" Background="#f0ad4e" Click="btnResetRootBranch_OnClick"/>-->
+                                            <Button x:Name="btnFetchAndResetRootBranch" Grid.Column="3" Content="Fetch &amp; Reset" Foreground="White" Background="#f0ad4e" Click="btnFetchAndResetRootBranch_OnClick"/>
+
+                                        </Grid>
+                                    </GroupBox>
+                                    
+                                    <Grid Grid.Row="2" Height="25">
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Style.Triggers>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+                                    </Grid>
+
+                                    <ListBox x:Name="lbRepositories" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="False"  ItemsPanel="{DynamicResource ListBoxItemsTemplate}" ItemContainerStyle="{DynamicResource RepositoryItemsStyle}" ItemsSource="{Binding RepositoryItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsSynchronizedWithCurrentItem="True">
+                                        <ListBox.Style>
+                                            <Style TargetType="ListBox">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Collapsed}" Value="True">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Collapsed}" Value="False">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ListBox.Style>
+                                    </ListBox>
+                                        
+                                    <Label x:Name="lblNoRepositoriesDetected" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Center" Foreground="Red" FontWeight="SemiBold" Content="No repositories detected.">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Style.Triggers>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                            <Condition Binding="{Binding Collapsed}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+                                                    
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+
+                                    <Grid Grid.Row="4" Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Style.Triggers>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding RepositoriesDetected}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </MultiDataTrigger>
+
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+
+
+                                        <Grid Grid.Row="0">
+                                            <Border BorderThickness="3" Padding="2" CornerRadius="5" SnapsToDevicePixels="True">
+                                                <Grid Height="25">
+                                                    <ProgressBar x:Name="pbRefreshProgress"  Height="25" Value="{Binding InProgressPercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding InProgressPercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        <ProgressBar.Style>
+                                                            <Style TargetType="ProgressBar">
+                                                                <Setter Property="Foreground" Value="Blue"/>
+                                                                <Setter Property="Background" Value="LightGray"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding InProgressPercentage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="100">
+                                                                        <Setter Property="Foreground" Value="Green"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </ProgressBar.Style>
+                                                    </ProgressBar>
+                                                    <Label Name="lblProgressPercentage" FontSize="12" Content="{Binding InProgressPercentage}" ContentStringFormat="{}{0}%" HorizontalAlignment="Center" FontWeight="ExtraBlack"/>
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+
+                                        
+                                        <TextBlock x:Name="lblLastRefresh" Grid.Row="1" HorizontalAlignment="Center" Foreground="DodgerBlue" FontWeight="SemiBold" FontSize="14" >
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}Last refresh : {0}">
+                                                    <Binding Path="LastRefresh" Converter="{StaticResource ResourceKey=DateTimeToTimeAgoStringConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Grid>
+
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        
+        
+
+        <Style x:Key="RepositoryItemsStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+
+                        <GroupBox x:Name="gbRepositoryItem" MaxWidth="325" MouseLeftButtonDown="gbRepositoryItem_OnMouseLeftButtonDown" MouseDoubleClick="gbRepositoryItem_OnMouseDoubleClick" Margin="0,0,0,15" HorizontalAlignment="Stretch" Foreground="Black" FontSize="14" Header="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" HorizontalAlignment="Left">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="5"/>
+                                        <ColumnDefinition Width="90"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <ComboBox x:Name="cbBranches" Grid.Column="0" SelectedItem="{Binding CurrentBranch}" ItemsSource="{Binding Branches}" ToolTip="{Binding CurrentBranch}"/>
+                                    <Button x:Name="btnChangeBranch" Grid.Column="1" Content="Change" Foreground="White" Background="#f0ad4e" Click="btnChangeBranch_OnClick"/>
+                                    <Label x:Name="lblStatus" Grid.Column="3" HorizontalAlignment="Center">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Setter Property="ContentStringFormat" Value="{}{0} changes"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Changes.Count}" Value="1">
+                                                        <Setter Property="ContentStringFormat" Value="{}{0} change"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Modified}" Value="True">
+                                                        <Setter Property="Content" Value="{Binding Changes.Count}"/>
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Setter Property="ToolTip" Value="Number of modified files"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Modified}" Value="False">
+                                                        <Setter Property="Content" Value="No changes"/>
+                                                        <Setter Property="Foreground" Value="LimeGreen" />
+                                                        <Setter Property="ContentStringFormat" Value="{x:Null}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Modified}" Value="{x:Null}">
+                                                        <Setter Property="Content" Value="Loading..."/>
+                                                        <Setter Property="Foreground" Value="Blue" />
+                                                        <Setter Property="ContentStringFormat" Value="{x:Null}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                    
+                                </Grid>
+
+                                <Label x:Name="lbErrorMessage" Grid.Row="1" Foreground="Red" HorizontalAlignment="Stretch" FontWeight="SemiBold" Content="{Binding Message, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Message, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                <Grid Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50*"/>
+                                        <ColumnDefinition Width="50*"/>
+                                    </Grid.ColumnDefinitions>
+
+
+
+                                    <Label x:Name="lblCommitsAhead" Content="{Binding CommitsAheadBy}" Grid.Column="0" HorizontalAlignment="Left" ToolTip="Number of commits ahead" Foreground="White" Background="LimeGreen">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Setter Property="ContentStringFormat" Value="{}{0} commits ahead"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CommitsAheadBy}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding CommitsAheadBy}" Value="1">
+                                                        <Setter Property="ContentStringFormat" Value="{}{0} commit ahead" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+
+                                    <Label x:Name="lblCommitsBehind" Content="{Binding CommitsBehindBy}" Grid.Column="1" HorizontalAlignment="Right" ToolTip="Number of commits behind" Foreground="White" Background="Red">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Setter Property="ContentStringFormat" Value="{}{0} commits behind"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CommitsBehindBy}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding CommitsBehindBy}" Value="1">
+                                                        <Setter Property="ContentStringFormat" Value="{}{0} commit behind" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+
+                                </Grid>
+
+
+                            </Grid>
+                        </GroupBox>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True" >
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Trigger>
+            </Style.Triggers>
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Black"/>
+            </Style.Resources>
+        </Style>
+
+        
+        
+        
+        <ItemsPanelTemplate x:Key="ListBoxItemsTemplate">
+            <!--<StackPanel IsItemsHost="True" Orientation="Vertical">-->
+            <WrapPanel Orientation="Vertical" IsItemsHost="True">
+                <WrapPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Refresh" Click="MenuItem_Refresh_OnClick"/>
+                    </ContextMenu>
+                </WrapPanel.ContextMenu>
+            </WrapPanel>
+        </ItemsPanelTemplate>
+
+        
+        
+        
+        <Style x:Key="OnMouseOver" TargetType="{x:Type TextBlock}">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="TextDecorations" Value="Underline" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        
+        
+        
+    </Controls:MetroWindow.Resources>
+
+    
+    
+    
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="75*"/>
+        </Grid.ColumnDefinitions>
+
+        
+        
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="28"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="300*"/>
+                <!--<RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>-->
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+        
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="5"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="tbRootDirectoryPath" Controls:TextBoxHelper.ClearTextButton="true" Grid.Row="0" Grid.Column="1" Controls:TextBoxHelper.Watermark="Directory Containing Git Repositories..." TextWrapping="Wrap" HorizontalAlignment="Stretch"  Text="{Binding RootDirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" KeyDown="tbRootDirectoryPath_KeyDown" />
+                <Button x:Name="btnSelectRootDirectoryFolder" Content="..." FontSize="13" Grid.Row="0" Grid.Column="2" Click="btnSelectRootDirectoryFolder_OnClick" />
+                <Button x:Name="btnAddRootDirectory" Content="Add" Grid.Row="0" Grid.Column="4" Foreground="White" Background="#3498DB" Focusable="False" Click="btnAddRootDirectory_OnClick"/>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <Label x:Name="lbRootDirectoryPathErrorMessage" Foreground="Red" FontWeight="SemiBold" Content="{Binding RootDirectoryPathError, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+
+            <ListBox x:Name="lbRootDirectories" Grid.Row="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsPanel="{DynamicResource ListBoxItemsTemplate}" ItemContainerStyle="{StaticResource RootDirectoryItemsStyle}" ItemsSource="{Binding RootDirectoryItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:IsHidden="True" />
+
+
+            
+        </Grid>
+        
+        
+        
+
+        
+        <GridSplitter Grid.Column="1"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Stretch"
+			Background="Black" 
+			ShowsPreview="True"
+			Width="1.3" />
+
+
+        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+
+            <Grid DataContext="{Binding SelectedRepositoryItem}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Button x:Name="btnCloseSelectedRepositoryItem" Grid.Row="0" Click="btnCloseSelectedRepositoryItem_OnClick" Content="X" Focusable="False" FontWeight="Bold" FontSize="20" HorizontalAlignment="Right" ToolTip="Hide panel" Background="White" Foreground="Red"/>
+
+
+            <Grid Grid.Row="1" Margin="20,0,20,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25*"/>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="25*"/>
+                </Grid.ColumnDefinitions>
+
+
+
+                <GroupBox Header="Repository Path" Grid.Row="0" Grid.Column="1">
+                    <TextBlock x:Name="tbRepositoryFilePath"  Text="{Binding Path}" Style="{DynamicResource OnMouseOver}" MouseLeftButtonDown="tbRepositoryFilePath_OnMouseLeftButtonDown" />
+                </GroupBox>
+
+                <GroupBox Header="Current Branch" Grid.Row="1" Grid.Column="1">
+                    <TextBlock x:Name="tbRepositoryCurrentBranch"  Text="{Binding CurrentBranch}" />
+                </GroupBox>
+
+                <GroupBox Header="Modified Files" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" >
+                    <TextBox x:Name="tbRepositoryModifiedFiles" Text="{Binding Changes, Converter={StaticResource ResourceKey=ObservableCollectionToStringConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" MaxHeight="250">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Changes.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                </GroupBox>
+
+                <GroupBox Header="Commits" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" >
+                    <TextBox x:Name="tbCommitLog" Text="{Binding CommitLog, Converter={StaticResource ResourceKey=ObservableCollectionToStringConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="250">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CommitLog.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                </GroupBox>
+
+                <GroupBox Header="Console" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+
+                            <!--<TextBox x:Name="tbConsole" Grid.Row="0" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="250"/>-->
+                            <!--<consoleControl:ConsoleControl Name="console" Grid.Row="0" Height="250" />-->
+                            <consoleControl:ConsoleControl Name="console" Grid.Row="0" Height="250" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ConsoleControl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="75"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox x:Name="tbConsoleCommand" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.ConsoleCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" KeyDown="tbConsoleCommand_OnKeyDown"/>
+                                <Button x:Name="btnSubmitCommand" Grid.Column="1" ToolTip="Submit git command" Content="Submit" Background="#f0ad4e" Foreground="White" Click="btnSubmitCommand_OnClick"/>
+
+
+                            </Grid>
+
+                        </Grid>
+                    </GroupBox>
+            </Grid>
+
+        </Grid>
+        
+        </ScrollViewer>
+        
+        
+        
+        
+        
+    </Grid>
+    
+</Controls:MetroWindow>

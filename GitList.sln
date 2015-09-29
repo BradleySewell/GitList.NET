@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitList.Client", "GitList.Client\GitList.Client.csproj", "{4F4504B1-B84A-41B4-8E80-8BB0ED015AE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitList.Core", "GitList.Core\GitList.Core.csproj", "{C039682E-5050-476C-A686-FAC969B84F2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitList.Background", "GitList.Background\GitList.Background.csproj", "{655C31E3-5CB5-434C-8695-F01761C2C005}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F4504B1-B84A-41B4-8E80-8BB0ED015AE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F4504B1-B84A-41B4-8E80-8BB0ED015AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F4504B1-B84A-41B4-8E80-8BB0ED015AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F4504B1-B84A-41B4-8E80-8BB0ED015AE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C039682E-5050-476C-A686-FAC969B84F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C039682E-5050-476C-A686-FAC969B84F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C039682E-5050-476C-A686-FAC969B84F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C039682E-5050-476C-A686-FAC969B84F2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{655C31E3-5CB5-434C-8695-F01761C2C005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{655C31E3-5CB5-434C-8695-F01761C2C005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{655C31E3-5CB5-434C-8695-F01761C2C005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{655C31E3-5CB5-434C-8695-F01761C2C005}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
