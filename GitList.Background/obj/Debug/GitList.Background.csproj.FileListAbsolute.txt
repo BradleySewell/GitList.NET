@@ -51,4 +51,3 @@ C:\Code\GitList\GitList.Background\bin\Debug\SourceLink.Git.pdb
 C:\Code\GitList\GitList.Background\bin\Debug\SourceLink.Git.xml
 C:\Code\GitList\GitList.Background\bin\Debug\FSharp.Core.xml
 C:\Code\GitList\GitList.Background\obj\Debug\GitList.Background.pdb
-C:\Code\GitList\GitList.Background\obj\Debug\GitList.Background.csprojResolveAssemblyReference.cache
