@@ -22,6 +22,7 @@ C:\Development\GitList\GitList.Core\bin\Debug\SourceLink.Git.xml
 C:\Development\GitList\GitList.Core\bin\Debug\FSharp.Core.xml
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.dll
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.pdb
+<<<<<<< HEAD
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.csprojResolveAssemblyReference.cache
 C:\Code\GitList\GitList.Core\obj\Debug\GitList.Core.dll
 C:\Code\GitList\GitList.Core\bin\Debug\NativeBinaries\amd64\git2-e0902fb.dll
@@ -47,3 +48,5 @@ C:\Code\GitList\GitList.Core\bin\Debug\SourceLink.Git.pdb
 C:\Code\GitList\GitList.Core\bin\Debug\SourceLink.Git.xml
 C:\Code\GitList\GitList.Core\bin\Debug\FSharp.Core.xml
 C:\Code\GitList\GitList.Core\obj\Debug\GitList.Core.pdb
+=======
+>>>>>>> c51aaa4eec42031db515bcc467dacebcfa481457
