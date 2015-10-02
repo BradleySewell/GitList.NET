@@ -75,18 +75,34 @@ namespace GitList.Core.Entities.Configuration
         }
 
 
-        private static int _refreshInterval;
-        public static int refreshInterval
+        private static int _periodicRefreshInterval;
+        public static int periodicRefreshInterval
         {
             get
             {
-                _refreshInterval = LoadSettingInt("refreshInterval");
-                return _refreshInterval;
+                _periodicRefreshInterval = LoadSettingInt("periodicRefreshInterval");
+                return _periodicRefreshInterval;
             }
             set
             {
-                UpdateSetting("refreshInterval", value.ToString());
-                _refreshInterval = LoadSettingInt("refreshInterval");
+                UpdateSetting("periodicRefreshInterval", value.ToString());
+                _periodicRefreshInterval = LoadSettingInt("periodicRefreshInterval");
+            }
+        }
+
+
+        private static int _refreshDetectionInterval;
+        public static int refreshDetectionInterval
+        {
+            get
+            {
+                _refreshDetectionInterval = LoadSettingInt("refreshDetectionInterval");
+                return _refreshDetectionInterval;
+            }
+            set
+            {
+                UpdateSetting("refreshDetectionInterval", value.ToString());
+                _refreshDetectionInterval = LoadSettingInt("refreshDetectionInterval");
             }
         }
 

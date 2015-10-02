@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-C:\Code\GitList\GitList.Client\obj\Debug\
+C:\Development\GitList\GitList.Client\obj\Debug\
 GitList.Client
 none
 false
 DEBUG;TRACE
-C:\Code\GitList\GitList.Client\App.xaml
+C:\Development\GitList\GitList.Client\App.xaml
 21135694389
 
-131133344347
-24888129840
+13-568904754
+24-1929799881
 GitListMainWindow.xaml;Resources\Icons.xaml;
 
 True

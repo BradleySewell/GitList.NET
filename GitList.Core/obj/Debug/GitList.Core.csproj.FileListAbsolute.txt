@@ -22,7 +22,6 @@ C:\Development\GitList\GitList.Core\bin\Debug\SourceLink.Git.xml
 C:\Development\GitList\GitList.Core\bin\Debug\FSharp.Core.xml
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.dll
 C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.pdb
-C:\Development\GitList\GitList.Core\obj\Debug\GitList.Core.csprojResolveAssemblyReference.cache
 C:\Code\GitList\GitList.Core\bin\Debug\NativeBinaries\amd64\git2-e0902fb.dll
 C:\Code\GitList\GitList.Core\bin\Debug\NativeBinaries\amd64\git2-e0902fb.pdb
 C:\Code\GitList\GitList.Core\bin\Debug\NativeBinaries\x86\git2-e0902fb.dll

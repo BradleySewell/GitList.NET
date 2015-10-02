@@ -120,7 +120,7 @@ namespace GitList.Core.Entities.Repository
 
                 var anyInProgress = item.RepositoryItems.ToList().Any(x => x.InProgress);
 
-                if (lastRefresh.TotalMinutes >= 10 && !item.Refreshing && !anyInProgress)
+                if (lastRefresh.TotalMinutes >= ConfigurationLoader.refreshDetectionInterval && !item.Refreshing && !anyInProgress)
                 {
                     RefreshRepositories(item, true);
                 }
@@ -202,7 +202,7 @@ namespace GitList.Core.Entities.Repository
             {
                 if (eventTriggered)
                 {
-                    Thread.Sleep(30000);
+                    Thread.Sleep(TimeSpan.FromMinutes(1));
                 }
 
                 DispatchInvoker.InvokeBackground(() =>
@@ -261,9 +261,9 @@ namespace GitList.Core.Entities.Repository
                 {
                     if (rootItem.RepositoryItems != null)
                     {
-                        var sortedList = rootItem.RepositoryItems.OrderBy(x => x.CurrentBranch).ToList();
+                        var sortedList = rootItem.RepositoryItems.OrderBy(x => x.CurrentBranch).ThenBy(x => x.Name).ToList();
                         rootItem.RepositoryItems.Clear();
-                        sortedList.ForEach(x => 
+                        sortedList.ForEach(x =>
                         {
                             rootItem.RepositoryItems.Add(x);
                         });
@@ -311,40 +311,6 @@ namespace GitList.Core.Entities.Repository
             return list;
         }
 
-        public void ChangeBranch(RepositoryItem item)
-        {
-            item.Message = null;
-
-            new Thread(() =>
-            {
-                try
-                {
-                    if (item.CurrentBranch == "DETACHED HEAD")
-                    {
-                        item.Message = "You cannot checkout branch 'DETACHED HEAD'";
-                    }
-                    else
-                    {
-                        new GitManager().ChangeBranch(item, item.CurrentBranch);
-                    }
-                }
-                catch (Exception e)
-                {
-                    DispatchInvoker.InvokeBackground(() =>
-                    {
-                        item.Message = e.Message;
-                        item.InProgress = false;
-                    });
-                }
-
-                DispatchInvoker.InvokeBackground(() =>
-                {
-                    item.CurrentBranch = GetCurrentBranchName(item);
-                    item.InProgress = false;
-                });
-
-            }).Start();
-        }
 
         //public void Reset(RepositoryItem item)
         //{
@@ -382,6 +348,8 @@ namespace GitList.Core.Entities.Repository
                         }
                     });
 
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
+
                     DispatchInvoker.InvokeBackground(() =>
                     {
                         item.RootBranch = null;
@@ -389,6 +357,62 @@ namespace GitList.Core.Entities.Repository
                     });
                 }).Start();
             }
+        }
+
+        public void ChangeRepositoryBranch(RepositoryItem item)
+        {
+            if (item != null && !string.IsNullOrEmpty(item.CurrentBranch))
+            {
+                SetRootRefreshInProgress(item.Parent);
+
+                new Thread(() =>
+                {
+                    ChangeBranch(item);
+
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
+
+                    DispatchInvoker.InvokeBackground(() =>
+                    {
+                        RefreshRepositories(item.Parent, false);
+                    });
+                }).Start();
+            }
+        }
+
+
+        private void ChangeBranch(RepositoryItem item)
+        {
+            item.Message = null;
+
+            new Thread(() =>
+            {
+                try
+                {
+                    if (item.CurrentBranch == "DETACHED HEAD")
+                    {
+                        item.Message = "You cannot checkout branch 'DETACHED HEAD'";
+                    }
+                    else
+                    {
+                        new GitManager().ChangeBranch(item, item.CurrentBranch);
+                    }
+                }
+                catch (Exception e)
+                {
+                    DispatchInvoker.InvokeBackground(() =>
+                    {
+                        item.Message = e.Message;
+                        item.InProgress = false;
+                    });
+                }
+
+                DispatchInvoker.InvokeBackground(() =>
+                {
+                    item.CurrentBranch = GetCurrentBranchName(item);
+                    item.InProgress = false;
+                });
+
+            }).Start();
         }
 
         public void FetchAndResetRootBranch(RootDirectoryItem item)

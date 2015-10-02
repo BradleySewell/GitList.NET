@@ -69,7 +69,7 @@ namespace GitList.Background.Services
                 rootItem != null &&
                 rootItem.Refreshing == false &&
                 rootItem.RepositoryItems.ToList().Any(repo => repo.InProgress) == false &&
-                rootItem.LastRefresh.AddMinutes(ConfigurationLoader.refreshInterval) <= DateTime.Now).DefaultIfEmpty(null).FirstOrDefault();
+                rootItem.LastRefresh.AddMinutes(ConfigurationLoader.periodicRefreshInterval) <= DateTime.Now).DefaultIfEmpty(null).FirstOrDefault();
         }
     }
 }

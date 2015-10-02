@@ -102,3 +102,8 @@ C:\Code\GitList\GitList.Client\bin\Debug\SourceLink.Git.dll
 C:\Code\GitList\GitList.Client\bin\Debug\FSharp.Core.xml
 C:\Code\GitList\GitList.Client\bin\Debug\SourceLink.Git.pdb
 C:\Code\GitList\GitList.Client\bin\Debug\SourceLink.Git.xml
+C:\Development\GitList\GitList.Client\bin\Debug\FSharp.Core.dll
+C:\Development\GitList\GitList.Client\bin\Debug\SourceLink.Git.dll
+C:\Development\GitList\GitList.Client\bin\Debug\FSharp.Core.xml
+C:\Development\GitList\GitList.Client\bin\Debug\SourceLink.Git.pdb
+C:\Development\GitList\GitList.Client\bin\Debug\SourceLink.Git.xml

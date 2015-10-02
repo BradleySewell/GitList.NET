@@ -348,7 +348,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ListBoxItem}">
 
-                        <GroupBox x:Name="gbRepositoryItem" MaxWidth="325" MouseLeftButtonDown="gbRepositoryItem_OnMouseLeftButtonDown" MouseDoubleClick="gbRepositoryItem_OnMouseDoubleClick" Margin="0,0,0,15" HorizontalAlignment="Stretch" Foreground="Black" FontSize="14" Header="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <GroupBox x:Name="gbRepositoryItem" MaxWidth="325" MouseLeftButtonDown="gbRepositoryItem_OnMouseLeftButtonDown" MouseDoubleClick="gbRepositoryItem_OnMouseDoubleClick" Margin="0,0,0,15" HorizontalAlignment="Stretch" Foreground="Black" FontSize="14" Header="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.RowDefinitions>

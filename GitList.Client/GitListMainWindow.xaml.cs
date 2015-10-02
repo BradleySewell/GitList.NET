@@ -159,7 +159,7 @@ namespace GitList.Client
             var selection = (Button) sender;
             var selectionDetails = (RepositoryItem) selection.DataContext;
 
-            gitListDataContext.Controllers.RepositoryController.ChangeBranch(selectionDetails);
+            gitListDataContext.Controllers.RepositoryController.ChangeRepositoryBranch(selectionDetails);
         }
 
 
