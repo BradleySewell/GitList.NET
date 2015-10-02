@@ -72,9 +72,12 @@
     <Compile Include="Abstracts\ABackgroundService.cs" />
     <Compile Include="Configuration\ConfigurationLoader.cs" />
     <Compile Include="Constants\FileNameConstants.cs" />
+    <Compile Include="Entities\Configuration\ConfigurationController.cs" />
+    <Compile Include="Entities\Configuration\ConfigurationItem.cs" />
     <Compile Include="Entities\Converters\DateTimeToTimeAgoStringConverter.cs" />
     <Compile Include="Entities\Git\Console\ConsoleController.cs" />
-    <Compile Include="Entities\Git\GitShell.cs" />
+    <Compile Include="Entities\Git\GitShellVisible.cs" />
+    <Compile Include="Entities\Git\GitShellHidden.cs" />
     <Compile Include="Entities\Controller\ControllerInitialiser.cs" />
     <Compile Include="Entities\Converters\ObservableCollectionToMultiStringConverter.cs" />
     <Compile Include="Entities\Converters\ObservableCollectionToStringConverter.cs" />

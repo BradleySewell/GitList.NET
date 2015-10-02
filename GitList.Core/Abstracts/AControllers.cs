@@ -10,11 +10,11 @@ namespace GitList.Core.Abstracts
 {
     public abstract class AControllers : IControllers
     {
-        public GitListDataContext gitListDataContext;
+        public GitListDataContext GitListDataContext;
 
-        public AControllers(GitListDataContext GitListDataContext)
+        public AControllers(GitListDataContext gitListDataContext)
         {
-            gitListDataContext = GitListDataContext;
+            GitListDataContext = gitListDataContext;
             Initialise();
             Start();
         }

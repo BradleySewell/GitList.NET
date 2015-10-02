@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using GitList.Core.Entities.Controller;
 using GitList.Core.Entities.NotifyIcon;
 using GitList.Core.Entities.Repository;
+using GitList.Core.Entities.Configuration;
 
 namespace GitList.Core.Entities.DataContext
 {
@@ -16,6 +17,24 @@ namespace GitList.Core.Entities.DataContext
         public ControllerInitialiser Controllers;
 
         public NotifyIconHandler NotifyIconHandler { get; set; }
+
+
+
+
+
+        private ConfigurationItem configuration;
+        public ConfigurationItem Configuration
+        {
+            get
+            {
+                return this.configuration;
+            }
+            set
+            {
+                this.configuration = value;
+                OnPropertyChanged("Configuration");
+            }
+        }
 
 
         private string rootDirectoryPath;
@@ -102,6 +121,9 @@ namespace GitList.Core.Entities.DataContext
                 OnPropertyChanged("ConsoleCommand");
             }
         }
+
+
+
 
 
         [field: NonSerialized]

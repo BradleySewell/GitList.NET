@@ -26,7 +26,7 @@ namespace GitList.Core.Entities.Repository
 
         public override void Initialise()
         {
-            gitListDataContext.RootDirectoryItems = new ObservableCollection<RootDirectoryItem>();
+            GitListDataContext.RootDirectoryItems = new ObservableCollection<RootDirectoryItem>();
         }
 
         public override void Start()
@@ -50,12 +50,12 @@ namespace GitList.Core.Entities.Repository
 
         public void AddRootDirectoryPath()
         {
-            if (!Directory.Exists(gitListDataContext.RootDirectoryPath))
+            if (!Directory.Exists(GitListDataContext.RootDirectoryPath))
             {
                 SetRootDirectoryPathError("Directory is not valid or does not exist!");
                 return;
             }
-            if (gitListDataContext.RootDirectoryItems.Any(x => x.Path == gitListDataContext.RootDirectoryPath))
+            if (GitListDataContext.RootDirectoryItems.Any(x => x.Path == GitListDataContext.RootDirectoryPath))
             {
                 SetRootDirectoryPathError("Directory has already been added!");
                 return;
@@ -64,7 +64,7 @@ namespace GitList.Core.Entities.Repository
 
             SetRootDirectoryPathError(null);
 
-            var rootItem = DiscoverRepositoriesAndAddToList(gitListDataContext.RootDirectoryPath);
+            var rootItem = DiscoverRepositoriesAndAddToList(GitListDataContext.RootDirectoryPath);
 
             ClearRootDirectoryPath();
 
@@ -76,7 +76,7 @@ namespace GitList.Core.Entities.Repository
 
         private RootDirectoryItem DiscoverRepositoriesAndAddToList(string path, bool collapsed = false)
         {
-            if (!Directory.Exists(path) || gitListDataContext.RootDirectoryItems.Any(x => x.Path == path))
+            if (!Directory.Exists(path) || GitListDataContext.RootDirectoryItems.Any(x => x.Path == path))
             {
                 return null;
             }
@@ -114,16 +114,19 @@ namespace GitList.Core.Entities.Repository
 
         private void OnChanged(object sender, FileSystemEventArgs e, RootDirectoryItem item)
         {
-            TimeSpan lastRefresh = (DateTime.Now - item.LastRefresh);
-            
-            var anyInProgress = item.RepositoryItems.ToList().Any(x => x.InProgress);
+            if (GitListDataContext.Configuration.RefreshDetectionEnabled)
+            {
+                TimeSpan lastRefresh = (DateTime.Now - item.LastRefresh);
 
-            if (lastRefresh.TotalSeconds >= 180 && !item.Refreshing && !anyInProgress)
-            {
-                RefreshRepositories(item, true);
-            }
-            else
-            {
+                var anyInProgress = item.RepositoryItems.ToList().Any(x => x.InProgress);
+
+                if (lastRefresh.TotalMinutes >= 10 && !item.Refreshing && !anyInProgress)
+                {
+                    RefreshRepositories(item, true);
+                }
+                else
+                {
+                }
             }
         }
 
@@ -132,24 +135,24 @@ namespace GitList.Core.Entities.Repository
 
         private void SetRootDirectoryPathError(string errorMessage)
         {
-            gitListDataContext.RootDirectoryPathError = errorMessage;
+            GitListDataContext.RootDirectoryPathError = errorMessage;
         }
 
         private void ClearRootDirectoryPath()
         {
-            gitListDataContext.RootDirectoryPath = null;
+            GitListDataContext.RootDirectoryPath = null;
         }
 
 
 
         public void RemoveRootDirectoryItem(RootDirectoryItem item)
         {
-            if (gitListDataContext.RootDirectoryItems.Contains(item))
+            if (GitListDataContext.RootDirectoryItems.Contains(item))
             {
-                gitListDataContext.RootDirectoryItems.Remove(item);
-                if (gitListDataContext.SelectedRepositoryItem != null && gitListDataContext.SelectedRepositoryItem.Parent == item)
+                GitListDataContext.RootDirectoryItems.Remove(item);
+                if (GitListDataContext.SelectedRepositoryItem != null && GitListDataContext.SelectedRepositoryItem.Parent == item)
                 {
-                    gitListDataContext.SelectedRepositoryItem = null;
+                    GitListDataContext.SelectedRepositoryItem = null;
                 }
 
                 SaveRootDirectoryitems();
@@ -158,23 +161,23 @@ namespace GitList.Core.Entities.Repository
 
         public void AddRootDirectoryItem(RootDirectoryItem item)
         {
-            if (!gitListDataContext.RootDirectoryItems.Contains(item))
+            if (!GitListDataContext.RootDirectoryItems.Contains(item))
             {
-                gitListDataContext.RootDirectoryItems.Add(item);
+                GitListDataContext.RootDirectoryItems.Add(item);
                 SaveRootDirectoryitems();
             }
         }
 
         public void SaveRootDirectoryitems()
         {
-            BinarySerializer.SaveFile(gitListDataContext.RootDirectoryItems, string.Format(@"{0}\{1}", AppDomain.CurrentDomain.BaseDirectory, FileNameConstants.SAVED_ROOT_DIRECTORIES_FILENAME));
+            BinarySerializer.SaveFile(GitListDataContext.RootDirectoryItems, string.Format(@"{0}\{1}", AppDomain.CurrentDomain.BaseDirectory, FileNameConstants.SAVED_ROOT_DIRECTORIES_FILENAME));
         }
 
 
 
         public void RefreshAll()
         {
-            gitListDataContext.RootDirectoryItems.ToList().ForEach(x => RefreshRepositories(x, false));
+            GitListDataContext.RootDirectoryItems.ToList().ForEach(x => RefreshRepositories(x, false));
         }
 
         public void RefreshRepositories(RootDirectoryItem rootItem, bool eventTriggered)
@@ -201,6 +204,11 @@ namespace GitList.Core.Entities.Repository
                 {
                     Thread.Sleep(30000);
                 }
+
+                DispatchInvoker.InvokeBackground(() =>
+                {
+                    rootItem.RepositoryBranches.Clear();
+                });
 
                 rootItem.RepositoryItems.ToList().ForEach(repo =>
                 {
@@ -242,12 +250,26 @@ namespace GitList.Core.Entities.Repository
                         repo.CommitsAheadBy = aheadCount;
                         repo.CommitsBehindBy = behindCount;
                         repo.CommitLog = commitLog;
-                        repo.Message = null;
                         repo.InProgress = false;
                         rootItem.Refreshing = false;
 
                     });
                 });
+
+
+                DispatchInvoker.InvokeBackground(() =>
+                {
+                    if (rootItem.RepositoryItems != null)
+                    {
+                        var sortedList = rootItem.RepositoryItems.OrderBy(x => x.CurrentBranch).ToList();
+                        rootItem.RepositoryItems.Clear();
+                        sortedList.ForEach(x => 
+                        {
+                            rootItem.RepositoryItems.Add(x);
+                        });
+                    }
+                });
+
             }).Start();
 
         }
@@ -391,8 +413,6 @@ namespace GitList.Core.Entities.Repository
                 x.InProgress = true;
                 x.Modified = null;
                 x.Changes = null;
-                x.Branches = null;
-                x.CurrentBranch = null;
                 x.CommitsAheadBy = 0;
                 x.CommitsBehindBy = 0;
                 x.CommitLog = null;

@@ -25,10 +25,10 @@
                 </StackPanel>
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Auto start" IsCheckable="true"/>
-                        <MenuItem Header="Minimize on close" IsCheckable="true"/>
-                        <MenuItem Header="Periodic refresh" IsCheckable="true"/>
-                        <MenuItem Header="Refresh detection" IsCheckable="true"/>
+                        <MenuItem Name="miAutoStart" Header="Auto start" IsCheckable="true" IsChecked="{Binding Configuration.AutoStartEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="miAutoStart_Click" IsEnabled="false"/>
+                        <MenuItem Name="miMinimizeOnClose" Header="Minimize on close" IsCheckable="true" IsChecked="{Binding Configuration.MinimizeOnClose, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="miMinimizeOnClose_Click" IsEnabled="false"/>
+                        <MenuItem Name="miRefreshPeriodically" Header="Refresh periodically" IsCheckable="true" IsChecked="{Binding Configuration.RefreshPeriodicallyEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="miRefreshPeriodically_Click"/>
+                        <MenuItem Name="miRefreshDetection" Header="Refresh detection" IsCheckable="true" IsChecked="{Binding Configuration.RefreshDetectionEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Click="miRefreshDetection_Click"/>
                     </ContextMenu>
                 </Button.ContextMenu>
             </Button>
@@ -627,12 +627,30 @@
                     </TextBox>
                 </GroupBox>
 
-                <GroupBox Header="Console" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" >
+                <!--<GroupBox Header="Console" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" >-->
+                    <GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" >
+                        <GroupBox.Header>
+                            <Grid Height="20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="75"/>
+                                    <ColumnDefinition Width="5"/>
+                                    <ColumnDefinition Width="75"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="CONSOLE" Foreground="White" Grid.Column="0" Margin="-3,-4,0,0"/>
+                                <Button x:Name="btnPopOutConsole" ToolTip="Pop out git console" Content="Pop out" Background="#f0ad4e" Foreground="White" Grid.Column="1" Margin="0,-4,0,-4" Click="btnPopOutConsole_Click"/>
+                                <Button x:Name="btnClearConsole" ToolTip="Clear console" Content="Clear" Background="#f0ad4e" Foreground="White" Grid.Column="3" Margin="0,-4,0,-4" Click="btnClearConsole_Click"/>
+                            </Grid>
+                        </GroupBox.Header>
+
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
+
+
+
 
                             <!--<TextBox x:Name="tbConsole" Grid.Row="0" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="250"/>-->
                             <!--<consoleControl:ConsoleControl Name="console" Grid.Row="0" Height="250" />-->

@@ -75,21 +75,6 @@ namespace GitList.Core.Entities.Configuration
         }
 
 
-        private static bool _backgroundRefreshEnabled;
-        public static bool backgroundRefreshEnabled
-        {
-            get
-            {
-                _backgroundRefreshEnabled = LoadSettingBool("backgroundRefreshEnabled");
-                return _backgroundRefreshEnabled;
-            }
-            set
-            {
-                UpdateSetting("backgroundRefreshEnabled", value.ToString());
-                _backgroundRefreshEnabled = LoadSettingBool("backgroundRefreshEnabled");
-            }
-        }
-
         private static int _refreshInterval;
         public static int refreshInterval
         {

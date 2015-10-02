@@ -20,33 +20,46 @@ namespace GitList.Core.Entities.Git.Console
 
         public override void Initialise()
         {
-            gitListDataContext.ConsoleControl = new ConsoleControl.WPF.ConsoleControl();
+            GitListDataContext.ConsoleControl = new ConsoleControl.WPF.ConsoleControl();
         }
 
         public override void Start()
         {
-            gitListDataContext.ConsoleControl.InitializeComponent();
-            gitListDataContext.ConsoleControl.StartProcess(FileNameConstants.GIT_EXE_PATH, "--login -i");
+            GitListDataContext.ConsoleControl.InitializeComponent();
+            GitListDataContext.ConsoleControl.StartProcess(FileNameConstants.GIT_EXE_PATH, "--login -i");
             //this.console.StartProcess("cmd.exe", string.Empty);
-            gitListDataContext.ConsoleControl.IsInputEnabled = false;
-            gitListDataContext.ConsoleControl.ShowDiagnostics = false;
+            GitListDataContext.ConsoleControl.IsInputEnabled = false;
+            GitListDataContext.ConsoleControl.ShowDiagnostics = false;
         }
 
         public void RunConsoleCommand()
         {
-            if (string.IsNullOrEmpty(gitListDataContext.ConsoleCommand)) return;
+            if (string.IsNullOrEmpty(GitListDataContext.ConsoleCommand)) return;
 
-            gitListDataContext.ConsoleControl.WriteInput(gitListDataContext.ConsoleCommand, Color.FromRgb(1, 100, 3), false);
-            gitListDataContext.ConsoleCommand = String.Empty;
+            GitListDataContext.ConsoleControl.WriteInput(GitListDataContext.ConsoleCommand, Color.FromRgb(1, 100, 3), false);
+            GitListDataContext.ConsoleCommand = String.Empty;
         }
 
         public void ChangeRepository(RepositoryItem selectionDetails)
         {
             if (selectionDetails != null)
             {
-                gitListDataContext.ConsoleControl.ClearOutput();
-                gitListDataContext.ConsoleControl.WriteInput(string.Format("cd \"{0}\"", selectionDetails.Path.ToLower()),
+                GitListDataContext.ConsoleControl.ClearOutput();
+                GitListDataContext.ConsoleControl.WriteInput(string.Format("cd \"{0}\"", selectionDetails.Path.ToLower()),
                     Color.FromRgb(1, 100, 3), false);
+            }
+        }
+
+        public void Clear()
+        {
+            GitListDataContext.ConsoleControl.ClearOutput();
+        }
+
+        public void Popout(RepositoryItem selectionDetails)
+        {
+            if (selectionDetails != null)
+            {
+                new GitShellVisible(selectionDetails.Path).InstantiateVisibleShell();
             }
         }
     }

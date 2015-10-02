@@ -87,17 +87,22 @@ namespace GitList.Core.Entities.Git
                 }
                 else
                 {
-                    var remoteBranch = branches.FirstOrDefault(x => x.IsRemote);
-                    if (remoteBranch != null)
-                    {
-                        var newLocalBranch = repo.CreateBranch(BranchName, remoteBranch.Tip);
-                        newLocalBranch = repo.Branches.Update(newLocalBranch,
-                            b =>
-                            {
-                                b.TrackedBranch = remoteBranch.CanonicalName;
-                            });
-                        repo.Checkout(newLocalBranch, new CheckoutOptions(), new Signature(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), DateTime.Now));
-                    }
+                    throw new Exception("You must checkout manually the first time");
+                    
+                    //COMMENTED THIS OUT AS IT CREATES DUPLICATE REMOTE BRANCHES, For instance R15_Release will duplicate as origin/R15_Release.
+                    //Current work around is to get them to check out the branch manually the first time around.
+                    
+                    //var remoteBranch = branches.FirstOrDefault(x => x.IsRemote);
+                    //if (remoteBranch != null)
+                    //{
+                    //    var newLocalBranch = repo.CreateBranch(BranchName, remoteBranch.Tip);
+                    //    newLocalBranch = repo.Branches.Update(newLocalBranch,
+                    //        b =>
+                    //        {
+                    //            b.TrackedBranch = remoteBranch.CanonicalName;
+                    //        });
+                    //    repo.Checkout(newLocalBranch, new CheckoutOptions(), new Signature(Guid.NewGuid().ToString(), Guid.NewGuid().ToString(), DateTime.Now));
+                    //}
                 }
             }
         }
@@ -159,7 +164,7 @@ namespace GitList.Core.Entities.Git
 
             List<string> Commands = new List<string>()
             {
-                "git fetch --all",
+                "git fetch --all --prune",
                 //below line works ok if you are on master, not if you are on a different branch.
                 //string.Format("git reset --hard {0}", string.Format("{0}/{1}",currentBranch.Head.Remote.Name, currentBranch.Head.Name)),
                 //"git reset --hard",
@@ -175,7 +180,7 @@ namespace GitList.Core.Entities.Git
 
         private void RunGitCommands(string RepositoryPath, List<string> Commands)
         {
-            new GitShell(RepositoryPath).ExecuteCommands(Commands);
+            new GitShellHidden(RepositoryPath).ExecuteCommands(Commands);
         }
 
         public List<string> CommitLog(RepositoryItem repository)

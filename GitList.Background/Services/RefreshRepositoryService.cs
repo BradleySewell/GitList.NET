@@ -16,39 +16,35 @@ namespace GitList.Background.Services
 {
     public class RefreshRepositoryService : ABackgroundService
     {
-        public RefreshRepositoryService(GitListDataContext GitListDataContext)
-            : base(GitListDataContext)
+        public RefreshRepositoryService(GitListDataContext gitListDataContext)
+            : base(gitListDataContext)
         {
-            GitListDataContext.RootDirectoryItems = GitListDataContext.RootDirectoryItems ?? new ObservableCollection<RootDirectoryItem>();
+            GitListDataContext.RootDirectoryItems = gitListDataContext.RootDirectoryItems ?? new ObservableCollection<RootDirectoryItem>();
         }
 
         public override void Start()
         {
-
-            if (ConfigurationLoader.backgroundRefreshEnabled)
+            var refreshRepositoryBackgroundService = new Thread(() =>
             {
-                var refreshRepositoryBackgroundService = new Thread(() =>
+                Thread.Sleep(60000);
+
+                while (true && GitListDataContext.Configuration.RefreshPeriodicallyEnabled)
                 {
-                    Thread.Sleep(60000);
-
-                    while (true)
+                    if (RefreshNotInProgress())
                     {
-                        if (RefreshNotInProgress())
+                        var nextItemToRefresh = NextRootDirectoryToRefresh();
+                        if (nextItemToRefresh != null)
                         {
-                            var nextItemToRefresh = NextRootDirectoryToRefresh();
-                            if (nextItemToRefresh != null)
-                            {
-                                GitListDataContext.Controllers.RepositoryController.RefreshRepositories(
-                                    nextItemToRefresh, false);
-                            }
+                            GitListDataContext.Controllers.RepositoryController.RefreshRepositories(
+                                nextItemToRefresh, false);
                         }
-                        Thread.Sleep(15000);
                     }
-                });
+                    Thread.Sleep(15000);
+                }
+            });
 
-                refreshRepositoryBackgroundService.IsBackground = true;
-                refreshRepositoryBackgroundService.Start();
-            }
+            refreshRepositoryBackgroundService.IsBackground = true;
+            refreshRepositoryBackgroundService.Start();
         }
 
         public override void Stop()

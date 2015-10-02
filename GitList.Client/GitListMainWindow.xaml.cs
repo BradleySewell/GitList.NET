@@ -238,6 +238,43 @@ namespace GitList.Client
             }
         }
 
+
+        private void btnClearConsole_Click(object sender, RoutedEventArgs e)
+        {
+            gitListDataContext.Controllers.ConsoleController.Clear();
+        }
+
+        private void btnPopOutConsole_Click(object sender, RoutedEventArgs e)
+        {
+            var selection = (Button)sender;
+            var selectionDetails = (RepositoryItem)selection.DataContext;
+            gitListDataContext.Controllers.ConsoleController.Popout(selectionDetails);
+        }
+
+
+
+        private void miAutoStart_Click(object sender, RoutedEventArgs e)
+        {
+            gitListDataContext.Controllers.ConfigurationController.SavConfiguration();
+        }
+
+        private void miMinimizeOnClose_Click(object sender, RoutedEventArgs e)
+        {
+            gitListDataContext.Controllers.ConfigurationController.SavConfiguration();
+        }
+
+        private void miRefreshPeriodically_Click(object sender, RoutedEventArgs e)
+        {
+            gitListDataContext.Controllers.ConfigurationController.SavConfiguration();
+        }
+
+        private void miRefreshDetection_Click(object sender, RoutedEventArgs e)
+        {
+            gitListDataContext.Controllers.ConfigurationController.SavConfiguration();
+        }
+
+
+
     }
 
 }
