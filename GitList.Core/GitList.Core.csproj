@@ -39,6 +39,10 @@
     <Reference Include="ConsoleControlAPI">
       <HintPath>..\packages\ConsoleControl.WPF.1.1.0.0\lib\net40\ConsoleControlAPI.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
+    </Reference>
     <Reference Include="LibGit2Sharp">
       <HintPath>..\packages\LibGit2Sharp.0.21.0.176\lib\net40\LibGit2Sharp.dll</HintPath>
     </Reference>
@@ -50,8 +54,9 @@
     <Reference Include="Simple.Wpf.Terminal.Themes">
       <HintPath>..\packages\Simple.Wpf.Terminal.1.33.0.0\lib\net40\Simple.Wpf.Terminal.Themes.dll</HintPath>
     </Reference>
-    <Reference Include="SourceLink.Git">
-      <HintPath>..\packages\SourceLink.Git.0.5.0\lib\net45\SourceLink.Git.dll</HintPath>
+    <Reference Include="SourceLink.Git, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SourceLink.Git.1.1.0\lib\net45\SourceLink.Git.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

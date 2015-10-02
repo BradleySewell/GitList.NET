@@ -25,7 +25,6 @@ C:\Development\GitList\GitList.Background\bin\Debug\FSharp.Core.xml
 C:\Development\GitList\GitList.Background\obj\Debug\GitList.Background.csprojResolveAssemblyReference.cache
 C:\Development\GitList\GitList.Background\obj\Debug\GitList.Background.dll
 C:\Development\GitList\GitList.Background\obj\Debug\GitList.Background.pdb
-C:\Code\GitList\GitList.Background\obj\Debug\GitList.Background.dll
 C:\Code\GitList\GitList.Background\bin\Debug\NativeBinaries\amd64\git2-e0902fb.dll
 C:\Code\GitList\GitList.Background\bin\Debug\NativeBinaries\amd64\git2-e0902fb.pdb
 C:\Code\GitList\GitList.Background\bin\Debug\NativeBinaries\x86\git2-e0902fb.dll
@@ -50,4 +49,6 @@ C:\Code\GitList\GitList.Background\bin\Debug\Simple.Wpf.Terminal.xml
 C:\Code\GitList\GitList.Background\bin\Debug\SourceLink.Git.pdb
 C:\Code\GitList\GitList.Background\bin\Debug\SourceLink.Git.xml
 C:\Code\GitList\GitList.Background\bin\Debug\FSharp.Core.xml
+C:\Code\GitList\GitList.Background\obj\Debug\GitList.Background.csprojResolveAssemblyReference.cache
+C:\Code\GitList\GitList.Background\obj\Debug\GitList.Background.dll
 C:\Code\GitList\GitList.Background\obj\Debug\GitList.Background.pdb
